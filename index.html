@@ -283,18 +283,28 @@
       }
     });
 
-    // 터치 이벤트 처리
-    document.addEventListener("touchstart", e => {
-      if (e.target.id === "startBtn") return;
-      if (gameStarted) {
-        jump(300);
-      } else if (startScreen.style.display === "block") {
-        startGame();
+  // 터치 이벤트 처리 (단일탭/더블탭 구분)
+ 
+ let lastTapTime = 0;
+  document.addEventListener("touchstart", e => {
+    if (e.target.id === "startBtn") return;
+        const currentTime = Date.now();
+    const tapInterval = currentTime - lastTapTime;
+    if (gameStarted) {
+      if (tapInterval < 300 && tapInterval > 0) {
+        jump(420); // ✅ 더블탭 → 큰 점프
+      } else {
+        jump(300); // ✅ 단일탭 → 작은 점프
       }
-    });
+    } else if (startScreen.style.display === "block") {
+      startGame();
+    }
+    lastTapTime = currentTime;
+  });
   </script>
 </body>
 </html>
+
 
 
 
