@@ -37,13 +37,15 @@
 
 
 
+
+
 <style>
   body {
     text-align: center;
     background: url("st.png") no-repeat center/cover;
     margin: 0;
-    user-select: none;
-    -webkit-user-drag: none;
+    user-select: none;       /* ✅ 전체 선택 방지 */
+    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
   }
   body.gameStarted { background: white !important; }
 
@@ -51,7 +53,7 @@
     position: relative;
     width: 100%;
     max-width: 1200px;
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 2 / 1; /* ✅ 화면 비율 유지 */
     margin: 20px auto;
     background: url("bg.png") no-repeat center/cover;
     border: 2px solid #333;
@@ -137,55 +139,7 @@
     #lastScore { font-size: 50px !important; }
     #gameOverMessage { font-size: 60px; }
   }
-
-  /* ✅ 모바일 전용: 700px 이하 */
-  @media (max-width: 700px) {
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100dvh;
-      overflow: hidden;
-    }
-
-    h1 { display: none !important; }
-
-    #game, #startScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      max-height: 500px; /* 세로 모드에서는 최대 500px */
-      margin: 0 auto;
-      border: none;
-      max-width: none;
-      aspect-ratio: 2 / 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #scoreBoard { font-size: 5vw; }
-    #gameOverMessage { font-size: 8vw; }
-  }
-
-  /* ✅ 모바일 가로 모드 전용: 세로 300px 고정 */
-  @media (max-width: 700px) and (orientation: landscape) {
-    #game, #startScreen {
-      aspect-ratio: 2 / 1;   /* 비율 유지 */
-      height: 300px;         /* 세로 고정 */
-      width: auto;           /* 가로는 자동 계산 (600px) */
-      margin: 0 auto;        /* 중앙 배치 */
-    }
-  }
 </style>
-
-
-
-
-
 
 
 
@@ -417,9 +371,3 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
-
-
-
-
-
-
