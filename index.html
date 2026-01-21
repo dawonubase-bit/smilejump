@@ -134,7 +134,7 @@
 
   /* 모바일 전용 */
   @media (max-width: 767px) {
-    #mainTitle { display: none; }      /* 시작화면 제목 숨김 */
+    #mainTitle { display: none; }
     #mobileTitle {
       display: block;
       position: absolute;
@@ -144,9 +144,31 @@
       font-size: 6vw;
       color: gray;
       font-weight: bold;
+      white-space: nowrap;
+    }
+  }
+
+  /* 모바일 가로모드 전용 */
+  @media (max-width: 767px) and (orientation: landscape) {
+    #mobileTitle {
+      top: 20%;          /* 위쪽 일부 잘려도 괜찮게 */
+      font-size: 4vw;    /* 글자 크기 줄여서 화면 안에 */
+    }
+
+    #startScreen {
+      position: relative;
+      height: 100%;
+    }
+
+    #startBtn {
+      position: absolute;
+      top: 50%;          /* 화면 세로 중앙 */
+      left: 50%;         /* 화면 가로 중앙 */
+      transform: translate(-50%, -50%);
     }
   }
 </style>
+
 
 
 
