@@ -34,6 +34,11 @@
 
 
 
+
+
+
+
+
 <style>
   body {
     text-align: center;
@@ -46,9 +51,10 @@
 
   #game {
     position: relative;
-    width: 1200px;
-    height: 600px;
-    margin: 50px auto;
+    width: 100%;
+    max-width: 1200px;
+    aspect-ratio: 2 / 1; /* ✅ 화면 비율 유지 */
+    margin: 20px auto;
     background: url("bg.png") no-repeat center/cover;
     border: 2px solid #333;
     overflow: hidden;
@@ -58,48 +64,48 @@
   #character {
     position: absolute;
     bottom: 0;
-    left: 250px;
-    width: 80px;
-    height: 80px;
+    left: 20%;
+    width: 8%;
+    height: auto;
     transform: translateY(0);
   }
   #character img {
     width: 100%;
-    height: 100%;
+    height: auto;
     pointer-events: none;
   }
 
-  .obstacle { position: absolute; left: 1200px; }
+  .obstacle { position: absolute; left: 100%; }
   .obstacle img { width: 100%; height: 100%; }
   .move { animation: moveObstacle var(--speed, 2s) linear forwards; }
 
-  @keyframes moveObstacle { from { left: 1200px; } to { left: -60px; } }
+  @keyframes moveObstacle { from { left: 100%; } to { left: -10%; } }
 
-  #startScreen { margin-top: 100px; position: relative; }
+  #startScreen { margin-top: 5vh; position: relative; }
   #startScreen p {
-    font-size: 30px; font-weight: bold; text-align: center;
-    margin-bottom: 100px;
+    font-size: 4vw; font-weight: bold; text-align: center;
+    margin-bottom: 5vh;
   }
   #startScreen button {
-    font-size: 70px; color: white; padding: 10px 30px;
+    font-size: 6vw; color: white; padding: 2vh 4vw;
     cursor: pointer; font-weight: bold; background: green;
   }
   #lastScore {
-    font-size: 50px !important; margin-top: 100px;
+    font-size: 5vw !important; margin-top: 5vh;
     color: red; font-weight: bold;
   }
 
   #scoreBoard {
     position: absolute;
-    top: 10px;
+    top: 1vh;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 24px;
+    font-size: 3vw;
     font-weight: bold;
     color: black;
   }
 
-  h1 { font-size: 100px; font-weight: bold; color: gray; }
+  h1 { font-size: 8vw; font-weight: bold; color: gray; }
 
   #gameOverMessage {
     display: none;
@@ -107,15 +113,34 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 60px;
+    font-size: 6vw;
     font-weight: bold;
     color: red;
     background: rgba(255,255,255,0.8);
-    padding: 20px 40px;
+    padding: 2vh 4vw;
     border: 3px solid red;
     border-radius: 10px;
   }
+
+  /* ✅ 데스크톱 전용 */
+  @media (min-width: 768px) {
+    #game {
+      height: 600px;
+    }
+    #character {
+      width: 80px;
+      height: 80px;
+      left: 250px;
+    }
+    #scoreBoard { font-size: 24px; }
+    h1 { font-size: 100px; }
+    #startScreen p { font-size: 30px; }
+    #startScreen button { font-size: 70px; }
+    #lastScore { font-size: 50px !important; }
+    #gameOverMessage { font-size: 60px; }
+  }
 </style>
+
 
 
 
@@ -346,7 +371,4 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
-
-
-
 
