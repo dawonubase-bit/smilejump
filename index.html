@@ -181,7 +181,7 @@ bold; user-select: none; }
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1200; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
     // ✅ 캐릭터 위치 초기화
@@ -199,7 +199,7 @@ bold; user-select: none; }
     obstacle.style.setProperty("--speed", obstacleSpeed + "s");
     obstacle.innerHTML = "<img src='cactus.png' alt='장애물'>";
 
-    const randomSize = Math.floor(Math.random() * 130) + 70;
+    const randomSize = Math.floor(Math.random() * 120) + 70;
     obstacle.style.width = randomSize + "px";
     obstacle.style.height = randomSize + "px";
     const maxJumpHeight = 300;
@@ -321,6 +321,7 @@ Date.now(); });
     lastTapTime = currentTime;
   });
 </script>
+
 
 
 
