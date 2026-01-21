@@ -35,10 +35,6 @@
 
 
 
-
-
-
-
 <style>
   body {
     text-align: center;
@@ -144,8 +140,6 @@
 
 
 
-
-
 <script>
   const game = document.getElementById("game");
   const character = document.getElementById("character");
@@ -160,18 +154,15 @@
   const bgMusic = document.getElementById("bgMusic");
   const gameOverSound = document.getElementById("gameOverSound");
 
-  /* ✅ 추가된 버튼 */
-  const bigJumpBtn = document.getElementById("bigJumpBtn");
-  const smallJumpBtn = document.getElementById("smallJumpBtn");
-
   let score = 0, isJumping = false, gameStarted = false;
   let jumpedForObstacle = false;
+  let lastJumpWasBig = false;
   let keyDownTime = 0;
   let clickTimer = null;
   let obstacleSpeed = 2;
   let minDelay = 1000, maxDelay = 1500;
   let obstacleTimers = [];
-  let touchStartTime = 0; // ✅ 터치 시작 시간 기록용
+  let touchStartTime = 0;
 
   function safePlay(audio) {
     if (!audio) return;
@@ -182,10 +173,11 @@
     }
   }
 
-  function jump(height) {
+  function jump(height, isBig = false) {
     if (isJumping) return;
     isJumping = true;
     jumpedForObstacle = true;
+    lastJumpWasBig = isBig;
     safePlay(jumpSound);
 
     let start = null, goingUp = true;
@@ -206,8 +198,8 @@
     requestAnimationFrame(animateJump);
   }
 
-  function smallJump() { jump(300); }
-  function bigJump() { jump(450); }
+  function smallJump() { jump(320, false); }
+  function bigJump() { jump(450, true); }
 
   function startGame() {
     startScreen.style.display = "none";
@@ -224,6 +216,24 @@
     startSound.pause(); startSound.currentTime = 0;
     safePlay(bgMusic);
     spawnObstacle();
+  }
+
+  // 점수 계산 함수
+  function calculateScore(obstacleSize, jumped, bigJumpUsed) {
+    let baseScore;
+    if (obstacleSize >= 150) {
+      baseScore = 20; // 큰 장애물
+    } else if (obstacleSize >= 100) {
+      baseScore = 15; // 중간 크기
+    } else {
+      baseScore = 10; // 작은 장애물
+    }
+
+    if (jumped) {
+      return bigJumpUsed ? baseScore + 10 : baseScore;
+    } else {
+      return 1; // 점프하지 않고 지나침
+    }
   }
 
   function spawnObstacle() {
@@ -247,7 +257,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 3, marginBottom = 5, marginLeft = 19, marginRight = 10;
+      const marginTop = 3, marginBottom = 7, marginLeft = 19, marginRight = 15;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -263,9 +273,14 @@
     obstacle.addEventListener("animationend", () => {
       clearInterval(checkCollision);
       if (game.contains(obstacle) && gameStarted) {
-        score += jumpedForObstacle ? 10 : 5;
+        const gainedScore = calculateScore(randomSize, jumpedForObstacle, 
+
+lastJumpWasBig);
+        score += gainedScore;
         scoreDisplay.textContent = score + "점";
+
         jumpedForObstacle = false;
+        lastJumpWasBig = false;
 
         if (score % 50 === 0) {
           if (obstacleSpeed > 0.5) obstacleSpeed -= 0.2;
@@ -338,15 +353,10 @@
     }
   });
 
-  /* ✅ 터치 이벤트: 탭은 작은 점프, 롱프레스는 큰 점프 */
   document.addEventListener("touchstart", e => {
-    if (e.target.id === "bigJumpBtn" || e.target.id === "smallJumpBtn" || e.target.id === 
-
-"startBtn") {
-      return; // 버튼 터치는 그대로 허용
-    }
+    if (e.target.id === "startBtn") return;
     if (gameStarted) {
-      touchStartTime = Date.now(); // 터치 시작 시간 기록
+      touchStartTime = Date.now();
       e.preventDefault();
       return;
     }
@@ -359,15 +369,13 @@
     if (!gameStarted) return;
     const touchDuration = Date.now() - touchStartTime;
     if (touchDuration < 170) {
-      smallJump(); // ✅ 짧은 터치 → 작은 점프
+      smallJump();
     } else {
-      bigJump();   // ✅ 긴 터치 → 큰 점프
+      bigJump();
     }
   });
-
-  /* ✅ 버튼 이벤트 연결 */
-  bigJumpBtn.addEventListener("click", () => { if (gameStarted) bigJump(); });
-  smallJumpBtn.addEventListener("click", () => { if (gameStarted) smallJump(); });
-  bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
-  smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
+
+
+
+
