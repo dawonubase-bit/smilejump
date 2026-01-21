@@ -148,29 +148,34 @@
       overflow: hidden;
     }
 
-    h1 {
-      display: none !important; /* 모바일에서는 글자 숨김 */
-    }
+    h1 { display: none !important; }
 
-    /* 시작 화면과 게임창을 동일하게 화면 전체에 맞춤 */
     #game, #startScreen {
       position: fixed;
       top: 0;
       left: 0;
-      width: 90vw;   /* ✅ 화면보다 살짝 작게 */
-      height: 90dvh; /* ✅ 화면보다 살짝 작게 */
-      margin: auto;
+      width: 100%;
+      height: 100%;
+      margin: 0;
       border: none;
       max-width: none;
       aspect-ratio: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* 버튼/캐릭터 중앙 배치 */
+      justify-content: center;
       align-items: center;
     }
 
     #scoreBoard { font-size: 5vw; }
     #gameOverMessage { font-size: 8vw; }
+  }
+
+  /* ✅ 모바일 가로 모드 전용 */
+  @media (max-width: 700px) and (orientation: landscape) {
+    #game, #startScreen {
+      width: 90vw;   /* 가로 모드에서는 조금 줄임 */
+      height: 80dvh; /* 세로가 짧으므로 더 줄여서 화면에 맞춤 */
+    }
   }
 </style>
 
