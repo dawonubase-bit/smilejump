@@ -333,7 +333,7 @@
   document.addEventListener("touchend", e => {
     if (!gameStarted) return;
     const touchDuration = Date.now() - touchStartTime;
-    if (touchDuration < 300) {
+    if (touchDuration < 200) {
       smallJump(); // ✅ 짧은 터치 → 작은 점프
     } else {
       bigJump();   // ✅ 긴 터치 → 큰 점프
@@ -346,5 +346,6 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
+
 
 
