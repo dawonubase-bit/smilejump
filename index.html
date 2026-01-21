@@ -217,7 +217,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 13, marginBottom = 2, marginLeft = 21, marginRight = 21;
+      const marginTop = 11, marginBottom = 1, marginLeft = 18, marginRight = 18;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -325,6 +325,7 @@
     lastTapTime = currentTime;
   });
 </script>
+
 
 
 
