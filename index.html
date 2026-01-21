@@ -122,7 +122,7 @@
   }
 
   /* ✅ 데스크톱 전용 */
-  @media (min-width: 768px) {
+  @media (min-width: 1000px) {
     #game {
       height: 600px;
     }
@@ -140,7 +140,7 @@
   }
 
   /* ✅ 모바일 전용: 글자와 시작 화면 숨기고 게임창만 표시 */
-  @media (max-width: 767px) {
+  @media (max-width: 999px) {
     html, body {
       margin: 0;
       padding: 0;
@@ -400,5 +400,6 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
+
 
 
