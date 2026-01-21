@@ -138,8 +138,8 @@
     #gameOverMessage { font-size: 60px; }
   }
 
-  /* ✅ 모바일 전용: 글자만 숨기고 게임창은 화면에 맞춤 */
-  @media (max-width: 767px) {
+  /* ✅ 모바일 전용: 700px 이하 */
+  @media (max-width: 700px) {
     html, body {
       margin: 0;
       padding: 0;
@@ -152,11 +152,13 @@
       display: none !important; /* 모바일에서는 글자 숨김 */
     }
 
-    #game {
-      width: 100%;
-      height: auto;
-      max-height: 100dvh; /* 화면에 맞게 줄어듦 */
-      margin: 0 auto;
+    #game, #startScreen {
+      position: fixed;   /* 화면 전체에 고정 */
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100dvh;    /* 세로·가로 모두 화면에 맞춤 */
+      margin: 0;
       border: none;
       max-width: none;
       aspect-ratio: auto;
