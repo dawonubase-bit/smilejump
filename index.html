@@ -139,23 +139,32 @@
     #gameOverMessage { font-size: 60px; }
   }
 
-  /* ✅ 모바일 전용: 게임창만 표시, 스크롤 제거 */
+  /* ✅ 모바일 전용: 글자와 시작 화면 숨기고 게임창만 표시 */
   @media (max-width: 767px) {
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden; /* 스크롤 제거 */
     }
-    h1, #startScreen p, #startScreen button, #lastScore {
-      display: none; /* 모바일에서는 게임창만 보이게 */
+
+    h1, #startScreen, #lastScore {
+      display: none; /* 모바일에서는 글자와 시작 화면 숨김 */
     }
+
     #game {
+      position: fixed;   /* 화면 전체에 고정 */
+      top: 0;
+      left: 0;
       width: 100vw;
-      height: 100vh; /* 화면 전체 채우기 */
+      height: 100vh;     /* 세로·가로 모두 전체 채우기 */
       margin: 0;
       border: none;
       max-width: none;
       aspect-ratio: auto;
     }
+
     #scoreBoard { font-size: 5vw; }
     #gameOverMessage { font-size: 8vw; }
   }
@@ -391,9 +400,5 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
-
-
-
-
 
 
