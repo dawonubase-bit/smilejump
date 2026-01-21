@@ -8,18 +8,13 @@
   </style>
 </head>
 <body>
-  <!-- 데스크톱 기본 제목 -->
-  <h1 id="mainTitle">스마일 점핑 🕹️</h1>
-
+  <h1>스마일 점핑 🕹️</h1>
   <div id="startScreen">
     <p>스페이스바, 클릭 또는 터치로 점프/시작하세요!</p>
     <button id="startBtn">START !</button>
     <p id="lastScore">최종 점수: 0점</p>
   </div>
-
   <div id="game">
-    <!-- 모바일 전용 제목: CSS에서만 보이도록 -->
-
     <div id="character"><img src="character.png" alt="캐릭터"></div>
     <div id="scoreBoard">점수: <span id="score">0</span></div>
     <div id="gameOverMessage">게임 오버!</div>
@@ -42,13 +37,15 @@
 
 
 
+
+
 <style>
   body {
     text-align: center;
     background: url("st.png") no-repeat center/cover;
     margin: 0;
-    user-select: none;
-    -webkit-user-drag: none;
+    user-select: none;       /* ✅ 전체 선택 방지 */
+    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
   }
   body.gameStarted { background: white !important; }
 
@@ -56,7 +53,7 @@
     position: relative;
     width: 100%;
     max-width: 1200px;
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 2 / 1; /* ✅ 화면 비율 유지 */
     margin: 20px auto;
     background: url("bg.png") no-repeat center/cover;
     border: 2px solid #333;
@@ -72,7 +69,11 @@
     height: auto;
     transform: translateY(0);
   }
-  #character img { width: 100%; height: auto; pointer-events: none; }
+  #character img {
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
 
   .obstacle { position: absolute; left: 100%; }
   .obstacle img { width: 100%; height: 100%; }
@@ -81,12 +82,18 @@
   @keyframes moveObstacle { from { left: 100%; } to { left: -10%; } }
 
   #startScreen { margin-top: 5vh; position: relative; }
-  #startScreen p { font-size: 4vw; font-weight: bold; margin-bottom: 5vh; }
+  #startScreen p {
+    font-size: 4vw; font-weight: bold; text-align: center;
+    margin-bottom: 5vh;
+  }
   #startScreen button {
     font-size: 6vw; color: white; padding: 2vh 4vw;
     cursor: pointer; font-weight: bold; background: green;
   }
-  #lastScore { font-size: 5vw !important; margin-top: 5vh; color: red; font-weight: bold; }
+  #lastScore {
+    font-size: 5vw !important; margin-top: 5vh;
+    color: red; font-weight: bold;
+  }
 
   #scoreBoard {
     position: absolute;
@@ -115,56 +122,22 @@
     border-radius: 10px;
   }
 
-  /* 데스크톱 전용 */
+  /* ✅ 데스크톱 전용 */
   @media (min-width: 768px) {
-    #game { height: 600px; }
-    #character { width: 80px; height: 80px; left: 250px; }
+    #game {
+      height: 600px;
+    }
+    #character {
+      width: 80px;
+      height: 80px;
+      left: 250px;
+    }
     #scoreBoard { font-size: 24px; }
     h1 { font-size: 100px; }
     #startScreen p { font-size: 30px; }
     #startScreen button { font-size: 70px; }
     #lastScore { font-size: 50px !important; }
     #gameOverMessage { font-size: 60px; }
-
-    /* 데스크톱에서는 게임 안 제목 숨김 */
-    #mobileTitle { display: none; }
-    #mainTitle { display: block; }
-  }
-
-  /* 모바일 전용 */
-  @media (max-width: 767px) {
-    #mainTitle { display: none; }
-    #mobileTitle {
-      display: block;
-      position: absolute;
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 6vw;
-      color: gray;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-  }
-
-  /* 모바일 가로모드 전용 */
-  @media (max-width: 767px) and (orientation: landscape) {
-    #mobileTitle {
-      top: 20%;          /* 위쪽 일부 잘려도 괜찮게 */
-      font-size: 4vw;    /* 글자 크기 줄여서 화면 안에 */
-    }
-
-    #startScreen {
-      position: relative;
-      height: 100%;
-    }
-
-    #startBtn {
-      position: absolute;
-      top: 50%;          /* 화면 세로 중앙 */
-      left: 50%;         /* 화면 가로 중앙 */
-      transform: translate(-50%, -50%);
-    }
   }
 </style>
 
@@ -398,7 +371,3 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
-
-
-
-
