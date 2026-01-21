@@ -258,7 +258,7 @@
 
      // 3) 마우스: 단일/더블클릭 구분 (딜레이 최소화)
   let clickTimer = null;
-  const SINGLE_DELAY = 180; // 더블클릭 인식 위한 최소 대기
+  const SINGLE_DELAY = 150; // 더블클릭 인식 위한 최소 대기
 
   document.addEventListener("click", e => {
     // 버튼 클릭은 여기서 처리하지 않음(이미 startBtn 리스너가 있음)
@@ -312,6 +312,7 @@
   </script>
 </body>
 </html>
+
 
 
 
