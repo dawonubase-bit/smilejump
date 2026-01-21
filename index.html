@@ -144,28 +144,28 @@
       margin: 0;
       padding: 0;
       width: 100vw;
-      height: 100dvh;   /* 동적 뷰포트 높이 */
-      overflow: hidden; /* 스크롤 제거 */
+      height: 100dvh;
+      overflow: hidden;
     }
 
     h1 {
       display: none !important; /* 모바일에서는 글자 숨김 */
     }
 
-    /* 시작 화면과 게임 화면 모두 전체 크기로 */
+    /* 시작 화면과 게임창 모두 동일하게 전체 표시 */
     #game, #startScreen {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100dvh;
-      margin: 0;
+      width: 90vw;   /* ✅ 화면보다 살짝 작게 */
+      height: 90dvh; /* ✅ 화면보다 살짝 작게 */
+      margin: 0 auto;
       border: none;
       max-width: none;
       aspect-ratio: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* 버튼 중심으로 */
+      justify-content: center; /* 버튼 중심 */
       align-items: center;
     }
 
@@ -173,6 +173,7 @@
     #gameOverMessage { font-size: 8vw; }
   }
 </style>
+
 
 
 
