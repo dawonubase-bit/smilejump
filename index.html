@@ -10,7 +10,9 @@
 <body>
   <h1>스마일 점핑 🕹️</h1>
   <div id="startScreen">
-    <p>스페이스바, 클릭 또는 터치로 점프/시작하세요!</p>
+    <p>스페이스바 또는 터치를 눌러 점프/시작하세요!</p>
+    <p style="color: navy; font-size: 35px; font-weight: bold;"> 
+        (점프 높이는 터치 길이에 따라 달라집니다!) </p>         
     <button id="startBtn">START !</button>
     <p id="lastScore">최종 점수: 0점</p>
   </div>
@@ -80,14 +82,14 @@
   #startScreen { margin-top: 5vh; position: relative; }
   #startScreen p {
     font-size: 4vw; font-weight: bold; text-align: center;
-    margin-bottom: 5vh;
+    margin-bottom: 12vh;
   }
   #startScreen button {
     font-size: 6vw; color: white; padding: 2vh 4vw;
     cursor: pointer; font-weight: bold; background: green;
   }
   #lastScore {
-    font-size: 5vw !important; margin-top: 5vh;
+    font-size: 5vh; !important; margin-top: 5vh;
     color: red; font-weight: bold;
   }
 
@@ -143,9 +145,11 @@
     #scoreBoard { font-size: 35px; }
     #scoreMessage { font-size: 25px; } /* 데스크톱에서 글자 크기 조정 */
     h1 { font-size: 100px; }
-    #startScreen p { font-size: 30px; }
+    #startScreen p { font-size: 50px; }
+    #startScreen p:nth-of-type(2) {
+      position: absolute; top: 10%; left: 50%; transform: translateX(-50%); }
     #startScreen button { font-size: 70px; }
-    #lastScore { font-size: 50px !important; }
+    #lastScore { font-size: 70px !important; }
     #gameOverMessage { font-size: 60px; }
   }
 </style>
