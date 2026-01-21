@@ -34,15 +34,25 @@
 
 
 
-
 <style>
-  body { text-align: center; background: url("st.png") no-repeat center/cover; }
+  body {
+    text-align: center;
+    background: url("st.png") no-repeat center/cover;
+    margin: 0;
+    user-select: none;       /* ✅ 전체 선택 방지 */
+    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
+  }
   body.gameStarted { background: white !important; }
 
   #game {
-    position: relative; width: 1200px; height: 600px; margin: 50px auto;
-    background: url("bg.png") no-repeat center/cover; border: 2px solid #333;
-    overflow: hidden; display: none;
+    position: relative;
+    width: 1200px;
+    height: 600px;
+    margin: 50px auto;
+    background: url("bg.png") no-repeat center/cover;
+    border: 2px solid #333;
+    overflow: hidden;
+    display: none;
   }
 
   #character {
@@ -52,14 +62,10 @@
     width: 80px;
     height: 80px;
     transform: translateY(0);
-    user-select: none;       /* ✅ 선택 방지 */
-    -webkit-user-drag: none; /* ✅ 드래그 방지 */
   }
   #character img {
     width: 100%;
     height: 100%;
-    user-select: none;
-    -webkit-user-drag: none;
     pointer-events: none;
   }
 
@@ -70,15 +76,18 @@
   @keyframes moveObstacle { from { left: 1200px; } to { left: -60px; } }
 
   #startScreen { margin-top: 100px; position: relative; }
-  #startScreen p { font-size: 30px; font-weight: bold; text-align: center; margin-bottom: 
-
-100px; user-select: none; }
-  #startScreen button { font-size: 70px; color: white; padding: 10px 30px; cursor: pointer; 
-
-font-weight: bold; background: green; user-select: none; }
-  #lastScore { font-size: 50px !important; margin-top: 100px; color: red; font-weight: 
-
-bold; user-select: none; }
+  #startScreen p {
+    font-size: 30px; font-weight: bold; text-align: center;
+    margin-bottom: 100px;
+  }
+  #startScreen button {
+    font-size: 70px; color: white; padding: 10px 30px;
+    cursor: pointer; font-weight: bold; background: green;
+  }
+  #lastScore {
+    font-size: 50px !important; margin-top: 100px;
+    color: red; font-weight: bold;
+  }
 
   #scoreBoard {
     position: absolute;
@@ -88,10 +97,9 @@ bold; user-select: none; }
     font-size: 24px;
     font-weight: bold;
     color: black;
-    user-select: none;   /* ✅ 점수 드래그 방지 */
   }
 
-  h1 { font-size: 100px; font-weight: bold; color: gray; user-select: none; }
+  h1 { font-size: 100px; font-weight: bold; color: gray; }
 
   #gameOverMessage {
     display: none;
@@ -106,11 +114,8 @@ bold; user-select: none; }
     padding: 20px 40px;
     border: 3px solid red;
     border-radius: 10px;
-    user-select: none;   /* ✅ 게임 오버 메시지 드래그 방지 */
   }
 </style>
-
-
 
 
 
@@ -181,10 +186,9 @@ bold; user-select: none; }
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 1200; maxDelay = 1500;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
-    // ✅ 캐릭터 위치 초기화
     character.style.bottom = "0px";
 
     startSound.pause(); startSound.currentTime = 0;
@@ -199,7 +203,7 @@ bold; user-select: none; }
     obstacle.style.setProperty("--speed", obstacleSpeed + "s");
     obstacle.innerHTML = "<img src='cactus.png' alt='장애물'>";
 
-    const randomSize = Math.floor(Math.random() * 120) + 70;
+    const randomSize = Math.floor(Math.random() * 130) + 70;
     obstacle.style.width = randomSize + "px";
     obstacle.style.height = randomSize + "px";
     const maxJumpHeight = 300;
@@ -233,7 +237,6 @@ bold; user-select: none; }
         scoreDisplay.textContent = score + "점";
         jumpedForObstacle = false;
 
-        // ✅ 난이도 조절
         if (score % 50 === 0) {
           if (obstacleSpeed > 0.5) obstacleSpeed -= 0.2;
           if (minDelay > 400) { minDelay -= 100; maxDelay -= 100; }
@@ -269,9 +272,10 @@ bold; user-select: none; }
   /* 이벤트 처리 */
   startBtn.addEventListener("click", e => { e.stopPropagation(); startGame(); });
 
-  document.addEventListener("keydown", e => { if (e.code === "Space") keyDownTime = 
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") keyDownTime = Date.now();
+  });
 
-Date.now(); });
   document.addEventListener("keyup", e => {
     if (e.code === "Space") {
       const pressDuration = Date.now() - keyDownTime;
@@ -295,7 +299,7 @@ Date.now(); });
 
   document.addEventListener("dblclick", e => {
     if (e.target.id === "startBtn") return;
-    e.preventDefault();   // ✅ 기본 더블클릭 동작(드래그/선택) 방지
+    e.preventDefault();   // ✅ 더블클릭 시 기본 드래그/선택 방지
     if (gameStarted) {
       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
       bigJump();
