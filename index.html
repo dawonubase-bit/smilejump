@@ -18,6 +18,10 @@
     <div id="character"><img src="character.png" alt="캐릭터"></div>
     <div id="scoreBoard">점수: <span id="score">0</span></div>
     <div id="gameOverMessage">게임 오버!</div>
+
+    <!-- ✅ 동물 아이콘 적용된 점프 버튼 -->
+    <button id="bigJumpBtn">🦘 폴짝</button>
+    <button id="smallJumpBtn">🐇 깡총</button>
   </div>
 
   <!-- 🔊 사운드 파일들 -->
@@ -34,13 +38,14 @@
 
 
 
+
 <style>
   body {
     text-align: center;
     background: url("st.png") no-repeat center/cover;
     margin: 0;
-    user-select: none;       /* ✅ 전체 선택 방지 */
-    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
+    user-select: none;
+    -webkit-user-drag: none;
   }
   body.gameStarted { background: white !important; }
 
@@ -63,11 +68,7 @@
     height: 80px;
     transform: translateY(0);
   }
-  #character img {
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
+  #character img { width: 100%; height: 100%; pointer-events: none; }
 
   .obstacle { position: absolute; left: 1200px; }
   .obstacle img { width: 100%; height: 100%; }
@@ -115,9 +116,33 @@
     border: 3px solid red;
     border-radius: 10px;
   }
+
+  /* ✅ 추가된 버튼 스타일 */
+  #bigJumpBtn, #smallJumpBtn {
+    position: absolute;
+    bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    z-index: 9999;
+    opacity: 0.4;
+
+  }
+  #bigJumpBtn {
+    left: 20px;
+    bottom: 20px;
+    background: darkred;
+  }
+  #smallJumpBtn {
+    right: 20px;
+    bottom: 20px;
+    background: darkblue;
+  }
 </style>
-
-
 
 
 
@@ -134,6 +159,10 @@
   const startSound = document.getElementById("startSound");
   const bgMusic = document.getElementById("bgMusic");
   const gameOverSound = document.getElementById("gameOverSound");
+
+  /* ✅ 추가된 버튼 */
+  const bigJumpBtn = document.getElementById("bigJumpBtn");
+  const smallJumpBtn = document.getElementById("smallJumpBtn");
 
   let score = 0, isJumping = false, gameStarted = false;
   let jumpedForObstacle = false;
@@ -217,7 +246,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 5, marginBottom = 2, marginLeft = 18, marginRight = 22;
+      const marginTop = 5, marginBottom = 2, marginLeft = 10, marginRight = 19;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -299,7 +328,7 @@
 
   document.addEventListener("dblclick", e => {
     if (e.target.id === "startBtn") return;
-    e.preventDefault();   // ✅ 더블클릭 시 기본 드래그/선택 방지
+    e.preventDefault();
     if (gameStarted) {
       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
       bigJump();
@@ -324,12 +353,10 @@
     }
     lastTapTime = currentTime;
   });
+
+  /* ✅ 버튼 이벤트 연결 */
+  bigJumpBtn.addEventListener("click", () => { if (gameStarted) bigJump(); });
+  smallJumpBtn.addEventListener("click", () => { if (gameStarted) smallJump(); });
 </script>
-
-
-
-
-
-
 
 
