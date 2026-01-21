@@ -93,12 +93,24 @@
 
   #scoreBoard {
     position: absolute;
-    top: 1vh;
+    top: 3vh;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 3vw;
+    font-size: 5vw;
     font-weight: bold;
     color: black;
+  }
+
+  /* ✅ 새로 추가된 점수 메시지 */
+  #scoreMessage {
+    position: absolute;
+    top: 9vh;               /* 점수판(#scoreBoard)보다 아래 */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2vw;
+    font-weight: bold;
+    color: red;             /* 빨간색 표시 */
+    display: none;
   }
 
   h1 { font-size: 8vw; font-weight: bold; color: gray; }
@@ -128,7 +140,8 @@
       height: 80px;
       left: 250px;
     }
-    #scoreBoard { font-size: 24px; }
+    #scoreBoard { font-size: 35px; }
+    #scoreMessage { font-size: 25px; } /* 데스크톱에서 글자 크기 조정 */
     h1 { font-size: 100px; }
     #startScreen p { font-size: 30px; }
     #startScreen button { font-size: 70px; }
@@ -160,9 +173,14 @@
   let keyDownTime = 0;
   let clickTimer = null;
   let obstacleSpeed = 2;
-  let minDelay = 1000, maxDelay = 1500;
+  let minDelay = 800, maxDelay = 1700;
   let obstacleTimers = [];
   let touchStartTime = 0;
+
+  // 점수 메시지 표시 영역
+  const scoreMessage = document.createElement("div");
+  scoreMessage.id = "scoreMessage";
+  game.appendChild(scoreMessage);
 
   function safePlay(audio) {
     if (!audio) return;
@@ -198,7 +216,7 @@
     requestAnimationFrame(animateJump);
   }
 
-  function smallJump() { jump(320, false); }
+  function smallJump() { jump(300, false); }
   function bigJump() { jump(450, true); }
 
   function startGame() {
@@ -208,7 +226,7 @@
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 800; maxDelay = 1700;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
     character.style.bottom = "0px";
@@ -218,21 +236,37 @@
     spawnObstacle();
   }
 
+  // 점수 메시지 표시 함수
+  function showScoreMessage(text) {
+    scoreMessage.textContent = text;
+    scoreMessage.style.display = "block";
+    setTimeout(() => {
+      scoreMessage.style.display = "none";
+    }, 1000);
+  }
+
   // 점수 계산 함수
   function calculateScore(obstacleSize, jumped, bigJumpUsed) {
     let baseScore;
     if (obstacleSize >= 150) {
-      baseScore = 20; // 큰 장애물
+      baseScore = 20;
     } else if (obstacleSize >= 100) {
-      baseScore = 15; // 중간 크기
+      baseScore = 15;
     } else {
-      baseScore = 10; // 작은 장애물
+      baseScore = 10;
     }
 
     if (jumped) {
-      return bigJumpUsed ? baseScore + 10 : baseScore;
+      if (bigJumpUsed) {
+        showScoreMessage(`폴짝! +${baseScore + 10}점`);
+        return baseScore + 10;
+      } else {
+        showScoreMessage(`깡총! +${baseScore}점`);
+        return baseScore;
+      }
     } else {
-      return 1; // 점프하지 않고 지나침
+      showScoreMessage("잘 피했군! → +1점");
+      return 1;
     }
   }
 
@@ -257,7 +291,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 3, marginBottom = 7, marginLeft = 19, marginRight = 15;
+      const marginTop = 5, marginBottom = 5, marginLeft = 17, marginRight = 10;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -365,17 +399,15 @@ lastJumpWasBig);
     }
   });
 
-  document.addEventListener("touchend", e => {
+    document.addEventListener("touchend", e => {
     if (!gameStarted) return;
     const touchDuration = Date.now() - touchStartTime;
     if (touchDuration < 170) {
-      smallJump();
+      smallJump(); // 짧은 터치 → 작은 점프
     } else {
-      bigJump();
+      bigJump();   // 긴 터치 → 큰 점프
     }
   });
 </script>
-
-
 
 
