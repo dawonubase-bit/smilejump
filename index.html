@@ -42,8 +42,8 @@
     text-align: center;
     background: url("st.png") no-repeat center/cover;
     margin: 0;
-    user-select: none;       /* ✅ 전체 선택 방지 */
-    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
+    user-select: none;
+    -webkit-user-drag: none;
   }
   body.gameStarted { background: white !important; }
 
@@ -51,7 +51,7 @@
     position: relative;
     width: 100%;
     max-width: 1200px;
-    aspect-ratio: 2 / 1; /* ✅ 화면 비율 유지 */
+    aspect-ratio: 2 / 1;
     margin: 20px auto;
     background: url("bg.png") no-repeat center/cover;
     border: 2px solid #333;
@@ -152,22 +152,28 @@
       display: none !important; /* 모바일에서는 글자 숨김 */
     }
 
+    /* 시작 화면과 게임 화면 모두 전체 크기로 */
     #game, #startScreen {
-      position: fixed;   /* 화면 전체에 고정 */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100dvh;    /* 세로·가로 모두 화면에 맞춤 */
+      height: 100dvh;
       margin: 0;
       border: none;
       max-width: none;
       aspect-ratio: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 버튼 중심으로 */
+      align-items: center;
     }
 
     #scoreBoard { font-size: 5vw; }
     #gameOverMessage { font-size: 8vw; }
   }
 </style>
+
 
 
 
