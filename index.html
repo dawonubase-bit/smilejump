@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>스마일 점핑</title>
+  <style>
+    body { text-align: center; background: url("st.png") no-repeat center/cover; }
+    body.gameStarted { background: white !important; }
+    #game {
+      position: relative; width: 1200px; height: 600px; margin: 50px auto;
+      background: url("bg.png") no-repeat center/cover; border: 2px solid #333;
+      overflow: hidden; display: none;
+    }
+    #character { position: absolute; bottom: 0; left: 250px; width: 80px; height: 80px; }
+    #character img { width: 100%; height: 100%; }
+    .obstacle { position: absolute; left: 1200px; }
+    .obstacle img { width: 100%; height: 100%; }
+    .move { animation: moveObstacle var(--speed, 2s) linear forwards; }
+    @keyframes moveObstacle { from { left: 1200px; } to { left: -60px; } }
+    #startScreen { margin-top: 100px; position: relative; }
+    #startScreen p { font-size: 30px; font-weight: bold; text-align: center; margin-bottom: 100px; }
+    #startScreen button { font-size: 70px; color: white; padding: 10px 30px; cursor: pointer; font-weight: bold; background: green; }
+    #lastScore { font-size: 50px !important; margin-top: 100px; color: red; font-weight: bold; }
+    #scoreBoard { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 24px; font-weight: bold; color: black; }
+    h1 { font-size: 100px; font-weight: bold; color: gray; }
+    #gameOverMessage {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      font-weight: bold;
+      color: red;
+      background: rgba(255,255,255,0.8);
+      padding: 20px 40px;
+      border: 3px solid red;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>스마일 점핑 🕹️</h1>
+  <div id="startScreen">
+    <p>스페이스바, 클릭 또는 터치로 점프/시작하세요!</p>
+    <button id="startBtn">START !</button>
+    <p id="lastScore">최종 점수: 0점</p>
+  </div>
+  <div id="game">
+    <div id="character"><img src="character.png" alt="캐릭터"></div>
+    <div id="scoreBoard">점수: <span id="score">0</span></div>
+    <div id="gameOverMessage">게임 오버!</div>
+  </div>
+
+  <!-- 🔊 사운드 파일들 -->
+  <audio id="startSound" src="start.mp3" preload="auto" loop></audio>
+  <audio id="bgMusic" src="bgmusic.mp3" preload="auto" loop></audio>
+  <audio id="gameOverSound" src="gameover.mp3" preload="auto"></audio>
+  <audio id="jumpSound" src="jump.mp3" preload="auto"></audio>
+
+
+
+
+
+  <script>
+    const game = document.getElementById("game");
+    const character = document.getElementById("character");
+    const scoreDisplay = document.getElementById("score");
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+    const lastScoreDisplay = document.getElementById("lastScore");
+    const gameOverMessage = document.getElementById("gameOverMessage");
+
+    const jumpSound = document.getElementById("jumpSound");
+    const startSound = document.getElementById("startSound");
+    const bgMusic = document.getElementById("bgMusic");
+    const gameOverSound = document.getElementById("gameOverSound");
+
+    function safePlay(audio) {
+      if (!audio) return;
+      audio.currentTime = 0;
+      let playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.log("오디오 재생 실패:", err);
+        });
+      }
+    }
+
+    let score = 0, isJumping = false, gameStarted = false;
+    let jumpedForObstacle = false;
+    let keyDownTime = 0;
+    let clickTimer = null;
+
+    let obstacleSpeed = 2;
+    let minDelay = 1200;
+    let maxDelay = 1500;
+
+    let obstacleTimers = [];
+
+    function jump(height) {
+      if (isJumping) return;
+      isJumping = true;
+      jumpedForObstacle = true;
+      safePlay(jumpSound);
+
+      let start = null, goingUp = true;
+      function animateJump(timestamp) {
+        if (!start) start = timestamp;
+        let elapsed = timestamp - start;
+        if (goingUp) {
+          let newBottom = Math.min(elapsed, height);
+          character.style.bottom = newBottom + "px";
+          if (newBottom >= height) { goingUp = false; start = timestamp; }
+        } else {
+          let newBottom = Math.max(height - elapsed, 0);
+          character.style.bottom = newBottom + "px";
+          if (newBottom <= 0) { isJumping = false; return; }
+        }
+        requestAnimationFrame(animateJump);
+      }
+      requestAnimationFrame(animateJump);
+    }
+
+    function startGame() {
+      startScreen.style.display = "none";
+      game.style.display = "block";
+      document.body.classList.add("gameStarted");
+      score = 0; scoreDisplay.textContent = score + "점";
+      gameStarted = true;
+      isJumping = false; jumpedForObstacle = false;
+      obstacleSpeed = 2;
+      minDelay = 1200;
+      maxDelay = 1500;
+
+      obstacleTimers.forEach(id => clearTimeout(id));
+      obstacleTimers = [];
+
+      startSound.pause();
+      startSound.currentTime = 0;
+      safePlay(bgMusic);
+
+      spawnObstacle();
+    }
+
+    function spawnObstacle() {
+      if (!gameStarted) return;
+      const obstacle = document.createElement("div");
+      obstacle.classList.add("obstacle", "move");
+      obstacle.style.setProperty("--speed", obstacleSpeed + "s");
+      obstacle.innerHTML = "<img src='cactus.png' alt='장애물'>";
+
+      const randomSize = Math.floor(Math.random() * 110) + 50;
+      obstacle.style.width = randomSize + "px";
+      obstacle.style.height = randomSize + "px";
+      const maxJumpHeight = 300;
+      const randomBottom = Math.floor(Math.pow(Math.random(), 2) * (maxJumpHeight - 140));
+      obstacle.style.bottom = randomBottom + "px";
+
+      game.appendChild(obstacle);
+
+      const checkCollision = setInterval(() => {
+        const characterRect = character.getBoundingClientRect();
+        const obstacleRect = obstacle.getBoundingClientRect();
+        const marginTop = 2, marginBottom = 13, marginLeft = 21, marginRight = 21;
+        if (
+          characterRect.left + marginLeft < obstacleRect.right - marginRight &&
+          characterRect.right - marginRight > obstacleRect.left + marginLeft &&
+          characterRect.top + marginTop < obstacleRect.bottom - marginBottom &&
+          characterRect.bottom - marginBottom > obstacleRect.top + marginTop
+        ) {
+          gameOver();
+          clearInterval(checkCollision);
+          obstacle.style.animationPlayState = "paused";
+        }
+      }, 50);
+
+      obstacle.addEventListener("animationend", () => {
+        clearInterval(checkCollision);
+        if (game.contains(obstacle) && gameStarted) {
+          score += jumpedForObstacle ? 10 : 5;
+          scoreDisplay.textContent = score + "점";
+          jumpedForObstacle = false;
+
+          if (score % 100 === 0) {
+            if (obstacleSpeed > 0.5) obstacleSpeed -= 0.2;
+            if (minDelay > 400) { minDelay -= 100; maxDelay -= 100; }
+          }
+
+          game.removeChild(obstacle);
+        }
+      });
+
+      const randomDelay = Math.random() * maxDelay + minDelay;
+      const timerId = setTimeout(() => { if (gameStarted) spawnObstacle(); }, randomDelay);
+      obstacleTimers.push(timerId);
+    }
+
+    function gameOver() {
+      gameStarted = false;
+
+      // ✅ 메시지 즉시 표시
+      gameOverMessage.style.display = "block";
+
+      // ✅ 장애물 타이머 즉시 정리
+      obstacleTimers.forEach(id => clearTimeout(id));
+      obstacleTimers = [];
+
+      bgMusic.pause();
+      safePlay(gameOverSound);
+
+      gameOverSound.onended = () => {
+        gameOverMessage.style.display = "none";
+        game.style.display = "none";
+        startScreen.style.display = "block";
+        document.body.classList.remove("gameStarted");
+        safePlay(startSound);
+        lastScoreDisplay.textContent = "최종 점수: " + score + "점";
+        score = 0; scoreDisplay.textContent = score + "점";
+      };
+    }
+  </script>
+
+
+
+
+
+
+  <script>
+    // 버튼 클릭 시: 게임 시작
+    startBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      startGame();
+    });
+
+    // 스페이스바 입력 처리
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") keyDownTime = Date.now();
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.code === "Space") {
+        const pressDuration = Date.now() - keyDownTime;
+        // ✅ 게임 진행 중일 때만 점프 허용
+        if (gameStarted) {
+          if (pressDuration < 140) {
+            jump(300);
+          } else {
+            jump(420);
+          }
+        } else if (startScreen.style.display === "block") {
+          // ✅ 시작 화면 상태에서만 스페이스바로 게임 시작 가능
+          startGame();
+        }
+        // 게임 오버 상태에서는 아무 동작도 하지 않음
+      }
+    });
+
+    // 마우스 클릭/더블클릭 처리
+    document.addEventListener("click", e => {
+      if (e.target.id === "startBtn") return;
+      if (gameStarted) {
+        if (clickTimer) clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          jump(300);
+          clickTimer = null;
+        }, 200);
+      } else if (startScreen.style.display === "block") {
+        startGame();
+      }
+    });
+
+    document.addEventListener("dblclick", e => {
+      if (e.target.id === "startBtn") return;
+      if (gameStarted) {
+        if (clickTimer) {
+          clearTimeout(clickTimer);
+          clickTimer = null;
+        }
+        jump(420);
+      } else if (startScreen.style.display === "block") {
+        startGame();
+      }
+    });
+
+    // 터치 이벤트 처리
+    document.addEventListener("touchstart", e => {
+      if (e.target.id === "startBtn") return;
+      if (gameStarted) {
+        jump(300);
+      } else if (startScreen.style.display === "block") {
+        startGame();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
