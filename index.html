@@ -18,10 +18,6 @@
     <div id="character"><img src="character.png" alt="캐릭터"></div>
     <div id="scoreBoard">점수: <span id="score">0</span></div>
     <div id="gameOverMessage">게임 오버!</div>
-
-    <!-- ✅ 동물 아이콘 적용된 점프 버튼 -->
-    <button id="bigJumpBtn">🦘 폴짝</button>
-    <button id="smallJumpBtn">🐇 깡총</button>
   </div>
 
   <!-- 🔊 사운드 파일들 -->
@@ -38,14 +34,13 @@
 
 
 
-
 <style>
   body {
     text-align: center;
     background: url("st.png") no-repeat center/cover;
     margin: 0;
-    user-select: none;
-    -webkit-user-drag: none;
+    user-select: none;       /* ✅ 전체 선택 방지 */
+    -webkit-user-drag: none; /* ✅ 전체 드래그 방지 */
   }
   body.gameStarted { background: white !important; }
 
@@ -68,7 +63,11 @@
     height: 80px;
     transform: translateY(0);
   }
-  #character img { width: 100%; height: 100%; pointer-events: none; }
+  #character img {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
 
   .obstacle { position: absolute; left: 1200px; }
   .obstacle img { width: 100%; height: 100%; }
@@ -116,33 +115,9 @@
     border: 3px solid red;
     border-radius: 10px;
   }
-
-  /* ✅ 추가된 버튼 스타일 */
-  #bigJumpBtn, #smallJumpBtn {
-    position: absolute;
-    bottom: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 20px 30px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    color: white;
-    z-index: 9999;
-    opacity: 0.5;
-
-  }
-  #bigJumpBtn {
-    left: 20px;
-    bottom: 20px;
-    background: darkred;
-  }
-  #smallJumpBtn {
-    right: 20px;
-    bottom: 20px;
-    background: darkblue;
-  }
 </style>
+
+
 
 
 
@@ -160,16 +135,12 @@
   const bgMusic = document.getElementById("bgMusic");
   const gameOverSound = document.getElementById("gameOverSound");
 
-  /* ✅ 추가된 버튼 */
-  const bigJumpBtn = document.getElementById("bigJumpBtn");
-  const smallJumpBtn = document.getElementById("smallJumpBtn");
-
   let score = 0, isJumping = false, gameStarted = false;
   let jumpedForObstacle = false;
   let keyDownTime = 0;
   let clickTimer = null;
   let obstacleSpeed = 2;
-  let minDelay = 1000, maxDelay = 1500;
+  let minDelay = 900, maxDelay = 1500;
   let obstacleTimers = [];
 
   function safePlay(audio) {
@@ -206,7 +177,7 @@
   }
 
   function smallJump() { jump(300); }
-  function bigJump() { jump(450); }
+  function bigJump() { jump(420); }
 
   function startGame() {
     startScreen.style.display = "none";
@@ -215,7 +186,7 @@
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 1200; maxDelay = 1500;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
     character.style.bottom = "0px";
@@ -246,7 +217,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 5, marginBottom = 2, marginLeft = 10, marginRight = 19;
+      const marginTop = 5, marginBottom = 2, marginLeft = 18, marginRight = 22;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -328,7 +299,7 @@
 
   document.addEventListener("dblclick", e => {
     if (e.target.id === "startBtn") return;
-    e.preventDefault();
+    e.preventDefault();   // ✅ 더블클릭 시 기본 드래그/선택 방지
     if (gameStarted) {
       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
       bigJump();
@@ -339,33 +310,22 @@
 
   let lastTapTime = 0;
   document.addEventListener("touchstart", e => {
-    // ✅ 버튼 터치는 허용
-    if (e.target.id === "bigJumpBtn" || e.target.id === "smallJumpBtn" || e.target.id === 
-
-"startBtn") {
-      return;
-    }
-
+    if (e.target.id === "startBtn") return;
     const currentTime = Date.now();
     const tapInterval = currentTime - lastTapTime;
-
-    // ✅ 게임 중에는 일반 터치 무시
     if (gameStarted) {
-      e.preventDefault();
-      return;
-    }
-
-    // 게임 시작 전에는 터치로 시작 가능
-    if (startScreen.style.display === "block") {
+      if (tapInterval < 300 && tapInterval > 0) {
+        bigJump();
+      } else {
+        smallJump();
+      }
+    } else if (startScreen.style.display === "block") {
       startGame();
     }
-
     lastTapTime = currentTime;
   });
-
-  /* ✅ 버튼 이벤트 연결 */
-  bigJumpBtn.addEventListener("click", () => { if (gameStarted) bigJump(); });
-  smallJumpBtn.addEventListener("click", () => { if (gameStarted) smallJump(); });
 </script>
+
+
 
 
