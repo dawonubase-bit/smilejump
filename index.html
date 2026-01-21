@@ -38,7 +38,6 @@
 
 
 
-
 <style>
   body {
     text-align: center;
@@ -138,6 +137,27 @@
     #startScreen button { font-size: 70px; }
     #lastScore { font-size: 50px !important; }
     #gameOverMessage { font-size: 60px; }
+  }
+
+  /* ✅ 모바일 전용: 게임창만 표시, 스크롤 제거 */
+  @media (max-width: 767px) {
+    body {
+      margin: 0;
+      overflow: hidden; /* 스크롤 제거 */
+    }
+    h1, #startScreen p, #startScreen button, #lastScore {
+      display: none; /* 모바일에서는 게임창만 보이게 */
+    }
+    #game {
+      width: 100vw;
+      height: 100vh; /* 화면 전체 채우기 */
+      margin: 0;
+      border: none;
+      max-width: none;
+      aspect-ratio: auto;
+    }
+    #scoreBoard { font-size: 5vw; }
+    #gameOverMessage { font-size: 8vw; }
   }
 </style>
 
@@ -371,4 +391,9 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
+
+
+
+
+
 
