@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -256,40 +256,32 @@
       }
     });
 
-     // 3) 마우스: 단일/더블클릭 구분 (딜레이 최소화)
-  let clickTimer = null;
-  const SINGLE_DELAY = 140; // 더블클릭 인식 위한 최소 대기
-
-  document.addEventListener("click", e => {
-    // 버튼 클릭은 여기서 처리하지 않음(이미 startBtn 리스너가 있음)
-    if (e.target.id === "startBtn") return;
-
-    if (gameStarted) {
-      // 작은 점프 예약
-      if (clickTimer) clearTimeout(clickTimer);
-      clickTimer = setTimeout(() => {
-        jump(300);
-        clickTimer = null;
-      }, SINGLE_DELAY);
-    } else if (startScreen.style.display === "block") {
-      startGame();
-    }
-  });
-
-  document.addEventListener("dblclick", e => {
-    if (e.target.id === "startBtn") return;
-
-    if (gameStarted) {
-      // 더블클릭이 오면 작은 점프 예약 취소 후 큰 점프
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        clickTimer = null;
+    // 마우스 클릭/더블클릭 처리
+    document.addEventListener("click", e => {
+      if (e.target.id === "startBtn") return;
+      if (gameStarted) {
+        if (clickTimer) clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          jump(300);
+          clickTimer = null;
+        }, 100);
+      } else if (startScreen.style.display === "block") {
+        startGame();
       }
-      jump(420);
-    } else if (startScreen.style.display === "block") {
-      startGame();
-    }
-  });
+    });
+
+    document.addEventListener("dblclick", e => {
+      if (e.target.id === "startBtn") return;
+      if (gameStarted) {
+        if (clickTimer) {
+          clearTimeout(clickTimer);
+          clickTimer = null;
+        }
+        jump(420);
+      } else if (startScreen.style.display === "block") {
+        startGame();
+      }
+    });
 
   // 터치 이벤트 처리 (단일탭/더블탭 구분)
  
@@ -312,19 +304,6 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
