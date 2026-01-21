@@ -135,13 +135,18 @@
   const bgMusic = document.getElementById("bgMusic");
   const gameOverSound = document.getElementById("gameOverSound");
 
+  /* ✅ 추가된 버튼 */
+  const bigJumpBtn = document.getElementById("bigJumpBtn");
+  const smallJumpBtn = document.getElementById("smallJumpBtn");
+
   let score = 0, isJumping = false, gameStarted = false;
   let jumpedForObstacle = false;
   let keyDownTime = 0;
   let clickTimer = null;
   let obstacleSpeed = 2;
-  let minDelay = 900, maxDelay = 1500;
+  let minDelay = 1000, maxDelay = 1500;
   let obstacleTimers = [];
+  let touchStartTime = 0; // ✅ 터치 시작 시간 기록용
 
   function safePlay(audio) {
     if (!audio) return;
@@ -177,7 +182,7 @@
   }
 
   function smallJump() { jump(300); }
-  function bigJump() { jump(420); }
+  function bigJump() { jump(450); }
 
   function startGame() {
     startScreen.style.display = "none";
@@ -186,7 +191,7 @@
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1200; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
     character.style.bottom = "0px";
@@ -217,7 +222,7 @@
     const checkCollision = setInterval(() => {
       const characterRect = character.getBoundingClientRect();
       const obstacleRect = obstacle.getBoundingClientRect();
-      const marginTop = 5, marginBottom = 2, marginLeft = 18, marginRight = 22;
+      const marginTop = 5, marginBottom = 2, marginLeft = 10, marginRight = 19;
       if (
         characterRect.left + marginLeft < obstacleRect.right - marginRight &&
         characterRect.right - marginRight > obstacleRect.left + marginLeft &&
@@ -299,7 +304,7 @@
 
   document.addEventListener("dblclick", e => {
     if (e.target.id === "startBtn") return;
-    e.preventDefault();   // ✅ 더블클릭 시 기본 드래그/선택 방지
+    e.preventDefault();
     if (gameStarted) {
       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
       bigJump();
@@ -308,24 +313,38 @@
     }
   });
 
-  let lastTapTime = 0;
+  /* ✅ 터치 이벤트: 탭은 작은 점프, 롱프레스는 큰 점프 */
   document.addEventListener("touchstart", e => {
-    if (e.target.id === "startBtn") return;
-    const currentTime = Date.now();
-    const tapInterval = currentTime - lastTapTime;
+    if (e.target.id === "bigJumpBtn" || e.target.id === "smallJumpBtn" || e.target.id === 
+
+"startBtn") {
+      return; // 버튼 터치는 그대로 허용
+    }
     if (gameStarted) {
-      if (tapInterval < 300 && tapInterval > 0) {
-        bigJump();
-      } else {
-        smallJump();
-      }
-    } else if (startScreen.style.display === "block") {
+      touchStartTime = Date.now(); // 터치 시작 시간 기록
+      e.preventDefault();
+      return;
+    }
+    if (startScreen.style.display === "block") {
       startGame();
     }
-    lastTapTime = currentTime;
   });
+
+  document.addEventListener("touchend", e => {
+    if (!gameStarted) return;
+    const touchDuration = Date.now() - touchStartTime;
+    if (touchDuration < 300) {
+      smallJump(); // ✅ 짧은 터치 → 작은 점프
+    } else {
+      bigJump();   // ✅ 긴 터치 → 큰 점프
+    }
+  });
+
+  /* ✅ 버튼 이벤트 연결 */
+  bigJumpBtn.addEventListener("click", () => { if (gameStarted) bigJump(); });
+  smallJumpBtn.addEventListener("click", () => { if (gameStarted) smallJump(); });
+  bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
+  smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
-
-
 
 
