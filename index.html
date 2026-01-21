@@ -123,13 +123,13 @@
     bottom: 20px;
     font-size: 20px;
     font-weight: bold;
-    padding: 20px 40px;
+    padding: 20px 30px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     color: white;
     z-index: 9999;
-    opacity: 0.4;
+    opacity: 0.5;
 
   }
   #bigJumpBtn {
@@ -169,7 +169,7 @@
   let keyDownTime = 0;
   let clickTimer = null;
   let obstacleSpeed = 2;
-  let minDelay = 900, maxDelay = 1500;
+  let minDelay = 1000, maxDelay = 1500;
   let obstacleTimers = [];
 
   function safePlay(audio) {
@@ -206,7 +206,7 @@
   }
 
   function smallJump() { jump(300); }
-  function bigJump() { jump(420); }
+  function bigJump() { jump(450); }
 
   function startGame() {
     startScreen.style.display = "none";
@@ -215,7 +215,7 @@
     score = 0; scoreDisplay.textContent = score + "점";
     gameStarted = true;
     isJumping = false; jumpedForObstacle = false;
-    obstacleSpeed = 2; minDelay = 1200; maxDelay = 1500;
+    obstacleSpeed = 2; minDelay = 1000; maxDelay = 1500;
     obstacleTimers.forEach(id => clearTimeout(id)); obstacleTimers = [];
 
     character.style.bottom = "0px";
@@ -339,18 +339,27 @@
 
   let lastTapTime = 0;
   document.addEventListener("touchstart", e => {
-    if (e.target.id === "startBtn") return;
+    // ✅ 버튼 터치는 허용
+    if (e.target.id === "bigJumpBtn" || e.target.id === "smallJumpBtn" || e.target.id === 
+
+"startBtn") {
+      return;
+    }
+
     const currentTime = Date.now();
     const tapInterval = currentTime - lastTapTime;
+
+    // ✅ 게임 중에는 일반 터치 무시
     if (gameStarted) {
-      if (tapInterval < 300 && tapInterval > 0) {
-        bigJump();
-      } else {
-        smallJump();
-      }
-    } else if (startScreen.style.display === "block") {
+      e.preventDefault();
+      return;
+    }
+
+    // 게임 시작 전에는 터치로 시작 가능
+    if (startScreen.style.display === "block") {
       startGame();
     }
+
     lastTapTime = currentTime;
   });
 
@@ -358,6 +367,5 @@
   bigJumpBtn.addEventListener("click", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("click", () => { if (gameStarted) smallJump(); });
 </script>
-
 
 
