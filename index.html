@@ -37,7 +37,6 @@
 
 
 
-
 <style>
   body {
     text-align: center;
@@ -139,27 +138,25 @@
     #gameOverMessage { font-size: 60px; }
   }
 
-  /* ✅ 모바일 전용: 글자와 시작 화면 숨기고 게임창만 표시 */
+  /* ✅ 모바일 전용: 글자만 숨기고 게임창은 화면에 맞춤 */
   @media (max-width: 767px) {
     html, body {
       margin: 0;
       padding: 0;
       width: 100vw;
-      height: 100dvh;   /* ✅ 동적 뷰포트 높이 사용 */
-      overflow: hidden; /* ✅ 스크롤 제거 */
+      height: 100dvh;   /* 동적 뷰포트 높이 */
+      overflow: hidden; /* 스크롤 제거 */
     }
 
-    h1, #startScreen, #lastScore {
-      display: none !important; /* ✅ 모바일에서는 글자와 시작 화면 숨김 */
+    h1 {
+      display: none !important; /* 모바일에서는 글자 숨김 */
     }
 
     #game {
-      position: fixed;   /* ✅ 화면 전체에 고정 */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100dvh;    /* ✅ 세로·가로 모두 화면에 맞춤 */
-      margin: 0;
+      width: 100%;
+      height: auto;
+      max-height: 100dvh; /* 화면에 맞게 줄어듦 */
+      margin: 0 auto;
       border: none;
       max-width: none;
       aspect-ratio: auto;
@@ -401,4 +398,9 @@
   bigJumpBtn.addEventListener("touchstart", () => { if (gameStarted) bigJump(); });
   smallJumpBtn.addEventListener("touchstart", () => { if (gameStarted) smallJump(); });
 </script>
+
+
+
+
+
 
